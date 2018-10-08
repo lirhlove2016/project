@@ -3,7 +3,7 @@ import requests
 import json
 
 from common.readexcel import ExcelUtil
-
+from conf import TIMEOUT
 #readfile = r"E:\mysoft\myworksapce\project\API_PY_scripts\casedata\myapidata.xlsx"
 
 
@@ -14,6 +14,7 @@ class  ApiRequest(object):
         self.method=method
         self.data=data
         self.headers=headers
+		self.timeout=TIMEOUT
 
     #根据不同方法访问接口
     def api_request(self):
@@ -22,17 +23,17 @@ class  ApiRequest(object):
         
         if self.method=='post':
             
-            r=requests.post(self.url,data=self.data,headers=self.headers)
+            r=requests.post(self.url,data=self.data,headers=self.headers,timeout=float(self.timeout))
             return r
 
         elif self.method=='get':
-            r=requests.get(self.url,params=self.data,headers=self.headers)
+            r=requests.get(self.url,params=self.data,headers=self.headers,timeout=float(self.timeout))
             return r
         elif self.method=='put':
-            r=requests.put(self.url,params=self.data,headers=self.headers)
+            r=requests.put(self.url,params=self.data,headers=self.headers,timeout=float(self.timeout))
             return r
         elif self.method=='delete':
-            r=requests.delete(self.url,headers=self.headers)
+            r=requests.delete(self.url,headers=self.headers,timeout=float(self.timeout))
             return r
         else:
             print('%s is error.'%method)

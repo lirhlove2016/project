@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-
+'''
+1.datafile from dir
+2.timeout
+'''
 
 #1手动设置
 curpath=os.path.split(os.path.realpath(__file__))[0]
@@ -14,6 +17,7 @@ newfile=curpath+"\\result.xls"
 filepath="E:\\mysoftware\\mygitwork\\project\\API_py_scripts_debug"
 dataDir=os.path.join(filepath,'datadir')
 reportDir=os.path.join(filepath,'report')
+TIMEOUT=10
   
 if __name__=="__main__":
     print(dataDir)
