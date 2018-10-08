@@ -1,0 +1,2 @@
+用postman转出code,ajax
+放到html文件中

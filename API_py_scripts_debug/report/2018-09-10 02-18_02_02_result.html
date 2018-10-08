@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>测试报告</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.4"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    
+<style type="text/css" media="screen">
+body        { font-family: verdana, arial, helvetica, sans-serif; font-size: 80%; }
+table       { font-size: 100%; }
+pre         {word-wrap:break-word;word-break:break_all;overflow:auto; }#处理报告中错误结果溢出表格
+
+/* -- heading ---------------------------------------------------------------------- */
+h1 {
+    font-size: 16pt;
+    color: gray;
+}
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+
+.heading .attribute {
+    margin-top: 1ex;
+    margin-bottom: 0;
+}
+
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+
+/* -- css div popup ------------------------------------------------------------------------ */
+a.popup_link {
+}
+
+a.popup_link:hover {
+    color: red;
+}
+.img{
+        text-align: center;
+        margin:0 auto;
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+        border: 1px solid #777;
+}
+
+.screenshots {
+    position:absolute;
+    left: 20%;
+    top: 20%;
+    display: none;
+}
+.close_shots {
+    position:absolute;
+    top:0; left:98%;
+    z-index:99;
+    width:20px;
+    cursor:pointer;
+}
+.popup_window {
+    display: none;
+    position: relative;
+    left: 0px;
+    top: 0px;
+    /*border: solid #627173 1px; */
+    padding: 10px;
+    background-color: #E6E6D6;
+    font-family: "Lucida Console", "Courier New", Courier, monospace;
+    text-align: left;
+    font-size: 8pt;
+    width: 500px;
+}
+
+}
+/* -- report ------------------------------------------------------------------------ */
+#show_detail_line {
+    margin-top: 3ex;
+    margin-bottom: 1ex;
+}
+#result_table {
+    width: 80%;
+    border-collapse: collapse;
+    border: 1px solid #777;
+}
+#header_row {
+    font-weight: bold;
+    color: white;
+    background-color: #777;
+}
+#result_table td {
+    border: 1px solid #777;
+    padding: 2px;
+}
+#total_row  { font-weight: bold; }
+.passClass  { background-color: #6c6; }
+.failClass  { background-color: #c60; }
+.errorClass { background-color: #c00; }
+.passCase   { color: #6c6; }
+.failCase   { color: #c60; font-weight: bold; }
+.errorCase  { color: #c00; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+
+
+/* -- ending ---------------------------------------------------------------------- */
+#ending {
+}
+
+
+.piechart{
+    position:absolute;  ;
+    top:20px;
+    left:300px;
+    width: 200px;
+    float: left;
+    display:  inline;
+}
+
+
+</style>
+
+</head>
+<body>
+<script language="javascript" type="text/javascript">
+output_list = Array();
+
+/* level - 0:Summary; 1:Failed; 2:All */
+function showCase(level) {
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level < 1) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level > 1) {
+                tr.className = '';
+            }
+            else {
+                tr.className = 'hiddenRow';
+            }
+        }
+    }
+}
+
+
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        tid0 = 't' + cid.substr(1) + '.' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        if (toHide) {
+            document.getElementById('div_'+tid).style.display = 'none'
+            document.getElementById(tid).className = 'hiddenRow';
+        }
+        else {
+            document.getElementById(tid).className = '';
+        }
+    }
+}
+
+
+function showTestDetail(div_id){
+    var details_div = document.getElementById(div_id)
+    var displayState = details_div.style.display
+    // alert(displayState)
+    if (displayState != 'block' ) {
+        displayState = 'block'
+        details_div.style.display = 'block'
+    }
+    else {
+        details_div.style.display = 'none'
+    }
+}
+
+
+function html_escape(s) {
+    s = s.replace(/&/g,'&');
+    s = s.replace(/</g,'<');
+    s = s.replace(/>/g,'>');
+    return s;
+}
+
+function drawCircle(pass, fail, error){
+    var color = ["#6c6","#c60","#c00"];
+    var data = [pass,fail,error];
+    var text_arr = ["pass", "fail", "error"];
+
+    var canvas = document.getElementById("circle");
+    var ctx = canvas.getContext("2d");
+    var startPoint=0;
+    var width = 20, height = 10;
+    var posX = 112 * 2 + 20, posY = 30;
+    var textX = posX + width + 5, textY = posY + 10;
+    for(var i=0;i<data.length;i++){
+        ctx.fillStyle = color[i];
+        ctx.beginPath();
+        ctx.moveTo(112,84);
+        ctx.arc(112,84,84,startPoint,startPoint+Math.PI*2*(data[i]/(data[0]+data[1]+data[2])),false);
+        ctx.fill();
+        startPoint += Math.PI*2*(data[i]/(data[0]+data[1]+data[2]));
+        ctx.fillStyle = color[i];
+        ctx.fillRect(posX, posY + 20 * i, width, height);
+        ctx.moveTo(posX, posY + 20 * i);
+        ctx.font = 'bold 14px';
+        ctx.fillStyle = color[i];
+        var percent = text_arr[i] + ":"+data[i];
+        ctx.fillText(percent, textX, textY + 20 * i);
+
+    }
+}
+
+function show_shots(obj) {
+    obj.nextElementSibling.style.display="block";
+
+}
+
+function close_shots(obj) {
+    obj.parentElement.style.display="none";
+}
+
+</script>
+<div class="piechart">
+    <div>
+        <canvas id="circle" width="350" height="168" </canvas>
+    </div>
+</div>
+<div class='heading'>
+<h1>测试报告</h1>
+<p class='attribute'><strong>开始时间:</strong> 2018-09-10 18:02:02</p>
+<p class='attribute'><strong>耗时:</strong> 0:00:01.643547</p>
+<p class='attribute'><strong>状态:</strong> 通过 1</p>
+
+<p class='description'>用例执行情况</p>
+</div>
+
+
+
+<p id='show_detail_line'>显示
+<a href='javascript:showCase(0)'>概要</a>
+<a href='javascript:showCase(1)'>失败</a>
+<a href='javascript:showCase(2)'>所有</a>
+</p>
+
+<table id='result_table'>
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+<tr id='header_row'>
+    <td>测试组/测试用例</td>
+    <td>总数</td>
+    <td>通过</td>
+    <td>失败</td>
+    <td>错误</td>
+    <td>视图</td>
+    <td>错误截图</td>
+</tr>
+
+<tr class='passClass'>
+    <td>testAPI</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c1',1)">详情</a></td>
+    <td> </td>
+</tr>
+
+<tr id='pt1.1'>
+    <td class='none'><div class='testcase'>test_bdh_api</div></td>
+    <td colspan='5' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.1')" >
+        通过</a>
+
+    <div id='div_pt1.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <pre>
+        
+pt1.1: 接口总数 13
+--正在进行接口测试，开始第1个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/farmplantend/farmlands/count
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data 
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': 107, 'errno': 0}
+第1个接口，bdh查询用户获取地块数:测试成功。
+json数据为:{'errmsg': None, 'data': 107, 'errno': 0}
+--正在进行接口测试，开始第2个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/farmplantend/farmlands/
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data page=1&amp;rows=10
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': {'farmlandList': [{'userId': '22', 'updateTime': 1536310081, 'farmlandLevel': 2, 'farmlandArea': 10.0, 'farmlandId': '168eb2b6c84543d2af5b8ba23b39a99a', 'id': None, 'farmlandSoilQuality': 2, 'farmlandName': '3号地块', 'createTime': 1536310081, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'type': 1}, {'userId': '22', 'updateTime': 1536310657, 'farmlandLevel': 4, 'farmlandArea': 1000.0, 'farmlandId': '725e0f5e66fe4a17b64114e0474b86e3', 'id': None, 'farmlandSoilQuality': 3, 'farmlandName': '4号地块', 'createTime': 1536118697, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'type': 3}, {'userId': '22', 'updateTime': 1536118150, 'farmlandLevel': 2, 'farmlandArea': 10.0, 'farmlandId': '49661122b79841019c937bf214004267', 'id': None, 'farmlandSoilQuality': 2, 'farmlandName': '3号地块', 'createTime': 1536118150, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'type': 1}, {'userId': '22', 'updateTime': 1536118131, 'farmlandLevel': 2, 'farmlandArea': 10.0, 'farmlandId': '3b33b7371db7468ba2f6205e14da7ea8', 'id': None, 'farmlandSoilQuality': 2, 'farmlandName': '3号地块', 'createTime': 1536118131, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'type': 1}], 'count': 4}, 'errno': 0}
+第2个接口，bdh查看指定页地块:测试成功。
+json数据为:{'errmsg': None, 'data': {'farmlandList': [{'userId': '22', 'updateTime': 1536310081, 'farmlandLevel': 2, 'farmlandArea': 10.0, 'farmlandId': '168eb2b6c84543d2af5b8ba23b39a99a', 'id': None, 'farmlandSoilQuality': 2, 'farmlandName': '3号地块', 'createTime': 1536310081, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'type': 1}, {'userId': '22', 'updateTime': 1536310657, 'farmlandLevel': 4, 'farmlandArea': 1000.0, 'farmlandId': '725e0f5e66fe4a17b64114e0474b86e3', 'id': None, 'farmlandSoilQuality': 3, 'farmlandName': '4号地块', 'createTime': 1536118697, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'type': 3}, {'userId': '22', 'updateTime': 1536118150, 'farmlandLevel': 2, 'farmlandArea': 10.0, 'farmlandId': '49661122b79841019c937bf214004267', 'id': None, 'farmlandSoilQuality': 2, 'farmlandName': '3号地块', 'createTime': 1536118150, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'type': 1}, {'userId': '22', 'updateTime': 1536118131, 'farmlandLevel': 2, 'farmlandArea': 10.0, 'farmlandId': '3b33b7371db7468ba2f6205e14da7ea8', 'id': None, 'farmlandSoilQuality': 2, 'farmlandName': '3号地块', 'createTime': 1536118131, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'type': 1}], 'count': 4}, 'errno': 0}
+--正在进行接口测试，开始第3个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/farmplantend/farmlands/725e0f5e66fe4a17b64114e0474b86e3
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data 
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': {'rows': None, 'page': None, 'userId': '22', 'updateTime': 1536310657, 'farmlandLevel': 4, 'farmlandArea': 1000.0, 'farmlandId': '725e0f5e66fe4a17b64114e0474b86e3', 'id': None, 'offset': None, 'farmlandName': '4号地块', 'createTime': 1536118697, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'farmlandSoilQuality': 3, 'type': 3}, 'errno': 0}
+第3个接口，bdh订单编号-查看地块详情:测试成功。
+json数据为:{'errmsg': None, 'data': {'rows': None, 'page': None, 'userId': '22', 'updateTime': 1536310657, 'farmlandLevel': 4, 'farmlandArea': 1000.0, 'farmlandId': '725e0f5e66fe4a17b64114e0474b86e3', 'id': None, 'offset': None, 'farmlandName': '4号地块', 'createTime': 1536118697, 'otherInstructions': '', 'pictures': ['http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55'], 'farmlandSoilQuality': 3, 'type': 3}, 'errno': 0}
+--正在进行接口测试，开始第4个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/farmplantend/farmlands/
+header: {'content-type': 'application/json', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data { \"farmlandName\": \"3号地块\", \"farmlandArea\": \"10\", \"type\": 1, \"farmlandLevel\": 2, \"farmlandSoilQuality\": 2, \"pictures\": [ \"http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55\" ], \"userId\": \"1\", \"otherInstructions\": \"\" }
+-------返回参数-----------------
+code 200
+response {'errmsg': 'page or rows is null', 'data': None, 'errno': 400}
+第4个接口，bdh添加地块:测试失败。
+json数据为:{'errmsg': 'page or rows is null', 'data': None, 'errno': 400}
+--正在进行接口测试，开始第5个请求---------------
+-------请求参数-----------------
+put
+http://dev01.bdhlan.com:8080/bdhsystem/farmplantend/farmlands/725e0f5e66fe4a17b64114e0474b86e3
+header: {'content-type': 'application/json', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data {\"farmlandName\":\"4号地块\",\"farmlandArea\":\"1000.0\",\"type\":\"3\",\"farmlandLevel\":\"4\",\"farmlandSoilQuality\":\"3\",\"pictures\":[\"http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55\"],\"farmlandId\":\"725e0f5e66fe4a17b64114e0474b86e3\"}
+-------返回参数-----------------
+code 400
+response {'status': 400, 'title': 'Bad Request', 'path': '/farmplantend/farmlands/725e0f5e66fe4a17b64114e0474b86e3', 'detail': 'Required request body is missing: public com.farmfriend.bdhsystem.domain.ResultInfo com.farmfriend.farmplantend.web.rest.FarmlandResource.updateFarmlandByFarmlandId(java.lang.String,com.farmfriend.bdhsystem.domain.farmplantend.dto.FarmlandDto)', 'message': 'error.http.400', 'type': 'https://dev.farmfriend.com.cn/problem/problem-with-message'}
+第5个接口，bdh更新地块信息:测试失败。
+json数据为:{'status': 400, 'title': 'Bad Request', 'path': '/farmplantend/farmlands/725e0f5e66fe4a17b64114e0474b86e3', 'detail': 'Required request body is missing: public com.farmfriend.bdhsystem.domain.ResultInfo com.farmfriend.farmplantend.web.rest.FarmlandResource.updateFarmlandByFarmlandId(java.lang.String,com.farmfriend.bdhsystem.domain.farmplantend.dto.FarmlandDto)', 'message': 'error.http.400', 'type': 'https://dev.farmfriend.com.cn/problem/problem-with-message'}
+--正在进行接口测试，开始第6个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/farmplantend/plantUserWallet
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data 
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': {'amount': 800.0, 'uid': '22'}, 'errno': 0}
+第6个接口，bdh获取钱包余额:测试成功。
+json数据为:{'errmsg': None, 'data': {'amount': 800.0, 'uid': '22'}, 'errno': 0}
+--正在进行接口测试，开始第7个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/farmplantend/plantUserWallet/transLog
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data page=1&amp;rows=10
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': {'data': [{'createTime': '2018-08-31 15:55:53', 'createTimeStamp': '1535702153', 'changeMoney': 100.0, 'amount': 800.0, 'uid': '22', 'comment': '已收款：种植订单 [25356195632940047]'}, {'createTime': '2018-08-31 15:54:53', 'createTimeStamp': '1535702093', 'changeMoney': 100.0, 'amount': 700.0, 'uid': '22', 'comment': '已收款：种植订单 [75356195636191342]'}, {'createTime': '2018-08-31 15:20:53', 'createTimeStamp': '1535700053', 'changeMoney': 100.0, 'amount': 600.0, 'uid': '22', 'comment': '已收款：种植订单 [15356195621700113]'}, {'createTime': '2018-08-31 15:17:56', 'createTimeStamp': '1535699876', 'changeMoney': 100.0, 'amount': 500.0, 'uid': '22', 'comment': '已收款：种植订单 [25356195620301268]'}, {'createTime': '2018-08-30 19:19:10', 'createTimeStamp': '1535627950', 'changeMoney': 100.0, 'amount': 400.0, 'uid': '22', 'comment': '已收款：种植订单 [45356197195591692]'}, {'createTime': '2018-08-30 18:21:32', 'createTimeStamp': '1535624492', 'changeMoney': 100.0, 'amount': 300.0, 'uid': '22', 'comment': '已收款：种植订单 [45356197195591692]'}, {'createTime': '2018-08-30 18:19:32', 'createTimeStamp': '1535624372', 'changeMoney': 100.0, 'amount': 200.0, 'uid': '22', 'comment': '已收款：种植订单 [45356197195591692]'}, {'createTime': '2018-08-30 18:19:13', 'createTimeStamp': '1535624353', 'changeMoney': 100.0, 'amount': 100.0, 'uid': '22', 'comment': '已收款：种植订单 [45356197195591692]'}], 'total': 8}, 'errno': 0}
+第7个接口，bdh查看钱包交易记录:测试成功。
+json数据为:{'errmsg': None, 'data': {'data': [{'createTime': '2018-08-31 15:55:53', 'createTimeStamp': '1535702153', 'changeMoney': 100.0, 'amount': 800.0, 'uid': '22', 'comment': '已收款：种植订单 [25356195632940047]'}, {'createTime': '2018-08-31 15:54:53', 'createTimeStamp': '1535702093', 'changeMoney': 100.0, 'amount': 700.0, 'uid': '22', 'comment': '已收款：种植订单 [75356195636191342]'}, {'createTime': '2018-08-31 15:20:53', 'createTimeStamp': '1535700053', 'changeMoney': 100.0, 'amount': 600.0, 'uid': '22', 'comment': '已收款：种植订单 [15356195621700113]'}, {'createTime': '2018-08-31 15:17:56', 'createTimeStamp': '1535699876', 'changeMoney': 100.0, 'amount': 500.0, 'uid': '22', 'comment': '已收款：种植订单 [25356195620301268]'}, {'createTime': '2018-08-30 19:19:10', 'createTimeStamp': '1535627950', 'changeMoney': 100.0, 'amount': 400.0, 'uid': '22', 'comment': '已收款：种植订单 [45356197195591692]'}, {'createTime': '2018-08-30 18:21:32', 'createTimeStamp': '1535624492', 'changeMoney': 100.0, 'amount': 300.0, 'uid': '22', 'comment': '已收款：种植订单 [45356197195591692]'}, {'createTime': '2018-08-30 18:19:32', 'createTimeStamp': '1535624372', 'changeMoney': 100.0, 'amount': 200.0, 'uid': '22', 'comment': '已收款：种植订单 [45356197195591692]'}, {'createTime': '2018-08-30 18:19:13', 'createTimeStamp': '1535624353', 'changeMoney': 100.0, 'amount': 100.0, 'uid': '22', 'comment': '已收款：种植订单 [45356197195591692]'}], 'total': 8}, 'errno': 0}
+--正在进行接口测试，开始第8个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/goodscenter/goods/listGoodsQueryForApp
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data page=1&amp;rows=10
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': [{'unit': '瓶/箱', 'goodsName': 'fdafakjkjk', 'price': 3.0, 'goodsId': 165, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageW65EhSpt5s.png', 'uid': '1536564085024', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'fafa', 'price': 32.0, 'goodsId': 159, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagez6cCYBrADW.png', 'uid': '1536550107311', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'fdsafa', 'price': 3.0, 'goodsId': 158, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageWfBFa8hCWK.png', 'uid': '1536550088818', 'status': 'success'}], 'specification': '3'}, {'unit': '瓶/箱', 'goodsName': '范德萨发', 'price': 2.0, 'goodsId': 157, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageTXB64sxmsn.png', 'uid': '1536547917944', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': '发发', 'price': 2.0, 'goodsId': 156, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagerJrx5J5ExQ.png', 'uid': '1536547806245', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagehyfGaPnQaK.png', 'uid': '1536564713993', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'hghghhj', 'price': 23.0, 'goodsId': 99, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': 'slideimaget2tDK5EpJj.png', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimaget2tDK5EpJj.png', 'uid': '1536205828388', 'status': 'success'}], 'specification': '6'}, {'unit': '瓶/箱', 'goodsName': 'fadsfa', 'price': 2.0, 'goodsId': 114, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageD8bWdBKxMS.png', 'uid': '1536243088277', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageDe5Tk2P6AN.png', 'uid': '1536243090744', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagekGXjzQS35C.jpg', 'uid': '1536243137080', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageXmjzXG7zJR.png', 'uid': '1536243141395', 'status': 'success'}], 'specification': '21'}, {'unit': '瓶/箱', 'goodsName': 'fsafa', 'price': 3.0, 'goodsId': 113, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageWCNJD8PC5x.jpg', 'uid': '1536239675225', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'fafa', 'price': 23.0, 'goodsId': 109, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageMsMBXD5QeC.png', 'uid': '1536219311113', 'status': 'success'}], 'specification': 'ewe'}, {'unit': '瓶/箱', 'goodsName': 'ffasfasd', 'price': 3.0, 'goodsId': 108, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimage37i3bRjspb.png', 'uid': '1536213619524', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagedYA8Gx2YR3.png', 'uid': '1536213622216', 'status': 'success'}], 'specification': '23'}], 'errno': 0}
+第8个接口，bdh获取农资商品列表:测试成功。
+json数据为:{'errmsg': None, 'data': [{'unit': '瓶/箱', 'goodsName': 'fdafakjkjk', 'price': 3.0, 'goodsId': 165, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageW65EhSpt5s.png', 'uid': '1536564085024', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'fafa', 'price': 32.0, 'goodsId': 159, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagez6cCYBrADW.png', 'uid': '1536550107311', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'fdsafa', 'price': 3.0, 'goodsId': 158, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageWfBFa8hCWK.png', 'uid': '1536550088818', 'status': 'success'}], 'specification': '3'}, {'unit': '瓶/箱', 'goodsName': '范德萨发', 'price': 2.0, 'goodsId': 157, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageTXB64sxmsn.png', 'uid': '1536547917944', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': '发发', 'price': 2.0, 'goodsId': 156, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagerJrx5J5ExQ.png', 'uid': '1536547806245', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagehyfGaPnQaK.png', 'uid': '1536564713993', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'hghghhj', 'price': 23.0, 'goodsId': 99, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': 'slideimaget2tDK5EpJj.png', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimaget2tDK5EpJj.png', 'uid': '1536205828388', 'status': 'success'}], 'specification': '6'}, {'unit': '瓶/箱', 'goodsName': 'fadsfa', 'price': 2.0, 'goodsId': 114, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageD8bWdBKxMS.png', 'uid': '1536243088277', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageDe5Tk2P6AN.png', 'uid': '1536243090744', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagekGXjzQS35C.jpg', 'uid': '1536243137080', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageXmjzXG7zJR.png', 'uid': '1536243141395', 'status': 'success'}], 'specification': '21'}, {'unit': '瓶/箱', 'goodsName': 'fsafa', 'price': 3.0, 'goodsId': 113, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageWCNJD8PC5x.jpg', 'uid': '1536239675225', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'fafa', 'price': 23.0, 'goodsId': 109, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageMsMBXD5QeC.png', 'uid': '1536219311113', 'status': 'success'}], 'specification': 'ewe'}, {'unit': '瓶/箱', 'goodsName': 'ffasfasd', 'price': 3.0, 'goodsId': 108, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimage37i3bRjspb.png', 'uid': '1536213619524', 'status': 'success'}, {'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagedYA8Gx2YR3.png', 'uid': '1536213622216', 'status': 'success'}], 'specification': '23'}], 'errno': 0}
+--正在进行接口测试，开始第9个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/goodscenter/category/listCategoryQuery
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data 
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': [{'categoryId': 0, 'secondCategory': [], 'parentId': None, 'topCategory': '全部'}, {'categoryId': 1, 'secondCategory': [{'categoryId': 0, 'categoryName': '全部', 'parentId': None}, {'categoryId': 4, 'categoryName': '大豆', 'parentId': 1}, {'categoryId': 5, 'categoryName': '玉米', 'parentId': 1}, {'categoryId': 6, 'categoryName': '水稻', 'parentId': 1}], 'parentId': 0, 'topCategory': '种子'}, {'categoryId': 2, 'secondCategory': [{'categoryId': 0, 'categoryName': '全部', 'parentId': None}, {'categoryId': 7, 'categoryName': '除草剂', 'parentId': 2}, {'categoryId': 8, 'categoryName': '杀虫剂', 'parentId': 2}, {'categoryId': 9, 'categoryName': '杀菌剂', 'parentId': 2}, {'categoryId': 10, 'categoryName': '调节剂', 'parentId': 2}], 'parentId': 0, 'topCategory': '农药'}, {'categoryId': 3, 'secondCategory': [{'categoryId': 0, 'categoryName': '全部', 'parentId': None}, {'categoryId': 11, 'categoryName': '聚谷氨酸', 'parentId': 3}, {'categoryId': 12, 'categoryName': '叶面肥', 'parentId': 3}, {'categoryId': 13, 'categoryName': '水溶肥', 'parentId': 3}, {'categoryId': 14, 'categoryName': '复合肥', 'parentId': 3}, {'categoryId': 15, 'categoryName': '功能肥', 'parentId': 3}], 'parentId': 0, 'topCategory': '化肥'}], 'errno': 0}
+第9个接口，bdh获取所有商品分类:测试成功。
+json数据为:{'errmsg': None, 'data': [{'categoryId': 0, 'secondCategory': [], 'parentId': None, 'topCategory': '全部'}, {'categoryId': 1, 'secondCategory': [{'categoryId': 0, 'categoryName': '全部', 'parentId': None}, {'categoryId': 4, 'categoryName': '大豆', 'parentId': 1}, {'categoryId': 5, 'categoryName': '玉米', 'parentId': 1}, {'categoryId': 6, 'categoryName': '水稻', 'parentId': 1}], 'parentId': 0, 'topCategory': '种子'}, {'categoryId': 2, 'secondCategory': [{'categoryId': 0, 'categoryName': '全部', 'parentId': None}, {'categoryId': 7, 'categoryName': '除草剂', 'parentId': 2}, {'categoryId': 8, 'categoryName': '杀虫剂', 'parentId': 2}, {'categoryId': 9, 'categoryName': '杀菌剂', 'parentId': 2}, {'categoryId': 10, 'categoryName': '调节剂', 'parentId': 2}], 'parentId': 0, 'topCategory': '农药'}, {'categoryId': 3, 'secondCategory': [{'categoryId': 0, 'categoryName': '全部', 'parentId': None}, {'categoryId': 11, 'categoryName': '聚谷氨酸', 'parentId': 3}, {'categoryId': 12, 'categoryName': '叶面肥', 'parentId': 3}, {'categoryId': 13, 'categoryName': '水溶肥', 'parentId': 3}, {'categoryId': 14, 'categoryName': '复合肥', 'parentId': 3}, {'categoryId': 15, 'categoryName': '功能肥', 'parentId': 3}], 'parentId': 0, 'topCategory': '化肥'}], 'errno': 0}
+--正在进行接口测试，开始第10个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/farmassets/stores/goods/116
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data 
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': {'storeId': 74, 'storeName': '发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发', 'phone': '12222222223', 'goodsDetail': {'goodsIsshow': 1, 'goodsName': 'sdfafas', 'topCategoryId': '1', 'topCategoryName': '种子', 'goodsId': '116', 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagehpPbTZjKzb.png', 'uid': '1536292471332', 'status': 'success'}], 'goodsFactory': 'fsdfasf', 'specAndPrice': [{'specificationId': '145', 'skuId': '144', 'unitName': '瓶/箱', 'unitId': '1', 'state': 0, 'price': 23.0, 'spec': '23'}], 'goodsDescription': 'fdafafa'}}, 'errno': 0}
+第10个接口，bdh根据ID查看商品详情:测试成功。
+json数据为:{'errmsg': None, 'data': {'storeId': 74, 'storeName': '发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发发', 'phone': '12222222223', 'goodsDetail': {'goodsIsshow': 1, 'goodsName': 'sdfafas', 'topCategoryId': '1', 'topCategoryName': '种子', 'goodsId': '116', 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagehpPbTZjKzb.png', 'uid': '1536292471332', 'status': 'success'}], 'goodsFactory': 'fsdfasf', 'specAndPrice': [{'specificationId': '145', 'skuId': '144', 'unitName': '瓶/箱', 'unitId': '1', 'state': 0, 'price': 23.0, 'spec': '23'}], 'goodsDescription': 'fdafafa'}}, 'errno': 0}
+--正在进行接口测试，开始第11个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/goodscenter/unit/listUnitQuery
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data 
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': [{'unitName': '瓶/箱', 'unitId': 1}, {'unitName': '组/箱', 'unitId': 2}, {'unitName': '袋/箱', 'unitId': 3}, {'unitName': '桶/箱', 'unitId': 4}, {'unitName': '瓶/盒', 'unitId': 5}, {'unitName': '组/盒', 'unitId': 6}, {'unitName': '袋/盒', 'unitId': 7}, {'unitName': '/瓶', 'unitId': 8}, {'unitName': '/桶', 'unitId': 9}, {'unitName': '/袋', 'unitId': 10}, {'unitName': '/包', 'unitId': 11}], 'errno': 0}
+第11个接口，bdh获取所有规格:测试成功。
+json数据为:{'errmsg': None, 'data': [{'unitName': '瓶/箱', 'unitId': 1}, {'unitName': '组/箱', 'unitId': 2}, {'unitName': '袋/箱', 'unitId': 3}, {'unitName': '桶/箱', 'unitId': 4}, {'unitName': '瓶/盒', 'unitId': 5}, {'unitName': '组/盒', 'unitId': 6}, {'unitName': '袋/盒', 'unitId': 7}, {'unitName': '/瓶', 'unitId': 8}, {'unitName': '/桶', 'unitId': 9}, {'unitName': '/袋', 'unitId': 10}, {'unitName': '/包', 'unitId': 11}], 'errno': 0}
+--正在进行接口测试，开始第12个请求---------------
+-------请求参数-----------------
+get
+http://dev01.bdhlan.com:8080/bdhsystem/goodscenter/goods/listGoodsQueryForAppOfHomePage
+header: {'content-type': '', 'BDHAuthorization': 'B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L'}
+data 
+-------返回参数-----------------
+code 200
+response {'errmsg': None, 'data': [{'unit': '瓶/箱', 'goodsName': 'fsafa', 'price': 22.0, 'goodsId': 89, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': 'slideimagedmfmrE3DG4.png', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagedmfmrE3DG4.png', 'uid': '1536143614152', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'fafa', 'price': 32.0, 'goodsId': 159, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagez6cCYBrADW.png', 'uid': '1536550107311', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'ffa', 'price': 3.0, 'goodsId': 104, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': 'slideimageeXzh2eZ4eM.jpg', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageeXzh2eZ4eM.jpg', 'uid': '1536217643640', 'status': 'success'}, {'name': 'slideimage2D23HDSTMG.bmp', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimage2D23HDSTMG.bmp', 'uid': '1536217649170', 'status': 'success'}], 'specification': '23'}, {'unit': '袋/箱', 'goodsName': '复合肥（优品）', 'price': 432.01, 'goodsId': 25, 'secondCategoryName': '复合肥', 'secondCategoryId': '14', 'pictureUrlPojos': [{'name': 'slideimageeXzh2eZ4eM.jpg', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageeXzh2eZ4eM.jpg', 'uid': '1536217643640', 'status': 'success'}, {'name': 'slideimage2D23HDSTMG.bmp', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimage2D23HDSTMG.bmp', 'uid': '1536217649170', 'status': 'success'}], 'specification': '50kg×4'}], 'errno': 0}
+第12个接口，bdh首页农资展示:测试成功。
+json数据为:{'errmsg': None, 'data': [{'unit': '瓶/箱', 'goodsName': 'fsafa', 'price': 22.0, 'goodsId': 89, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': 'slideimagedmfmrE3DG4.png', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagedmfmrE3DG4.png', 'uid': '1536143614152', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'fafa', 'price': 32.0, 'goodsId': 159, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': None, 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimagez6cCYBrADW.png', 'uid': '1536550107311', 'status': 'success'}], 'specification': '23'}, {'unit': '瓶/箱', 'goodsName': 'ffa', 'price': 3.0, 'goodsId': 104, 'secondCategoryName': '大豆', 'secondCategoryId': '4', 'pictureUrlPojos': [{'name': 'slideimageeXzh2eZ4eM.jpg', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageeXzh2eZ4eM.jpg', 'uid': '1536217643640', 'status': 'success'}, {'name': 'slideimage2D23HDSTMG.bmp', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimage2D23HDSTMG.bmp', 'uid': '1536217649170', 'status': 'success'}], 'specification': '23'}, {'unit': '袋/箱', 'goodsName': '复合肥（优品）', 'price': 432.01, 'goodsId': 25, 'secondCategoryName': '复合肥', 'secondCategoryId': '14', 'pictureUrlPojos': [{'name': 'slideimageeXzh2eZ4eM.jpg', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimageeXzh2eZ4eM.jpg', 'uid': '1536217643640', 'status': 'success'}, {'name': 'slideimage2D23HDSTMG.bmp', 'url': 'http://farmlandbuckets.oss-cn-beijing.aliyuncs.com/slideimage2D23HDSTMG.bmp', 'uid': '1536217649170', 'status': 'success'}], 'specification': '50kg×4'}], 'errno': 0}
+--正在进行接口测试，开始第13个请求---------------
+-------请求参数-----------------
+post
+http://dev01.bdhlan.com:8080/bdhsystem/farmplantend/plantUser/loginOrReg
+header: {'content-type': 'application/x-www-form-urlencoded;charset=utf-8'}
+data checkCode=4832&amp;mobilePhone=18301212965
+-------返回参数-----------------
+code 200
+response {'errmsg': '验证码错误或已过期', 'data': None, 'errno': 13}
+第13个接口，bdh用户登录:测试失败。
+json数据为:{'errmsg': '验证码错误或已过期', 'data': None, 'errno': 13}
+-------正在写入数据，请等待-----------------
+write finished
+
+
+        </pre>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+    <td></td>
+</tr>
+
+<tr id='total_row'>
+    <td>统计</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td> </td>
+    <td> </td>
+</tr>
+</table>
+<script>
+    drawCircle(1, 0, 0)
+</script>
+
+<div id='ending'> </div>
+
+</body>
+</html>

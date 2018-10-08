@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>title</title>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+   <style type="text/css">
+        .main{
+            text-align: left;
+            background-color: #fff;
+            border-radius: 20px;
+            width: 800px;
+            height: 350px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
+    </style>
+    <script type="text/javascript">
+		function save(){
+			var settings = {
+			  "async": true,
+			  "crossDomain": true,
+			  "url": "http://dev01.bdhlan.com:8080/bdhsystem/farmplantend/farmlands/725e0f5e66fe4a17b64114e0474b86e3",
+			  "method": "PUT",
+			  "headers": {
+				"content-type": "application/json",
+				"bdhauthorization": "B94ftK1WY6JSUe7hBTfmgOsGckPFbW8dRASuVNQ52ag5f9pS//4V5E66NZNgQq9tnw2GwdcnZgG7Nz6SEv/klZB+VHjS3DzMCKDb92L",
+			  },
+			  "processData": false,
+			  "data": "{ \"farmlandName\": \"3号地块\", \"farmlandArea\": \"10\", \"type\": 1, \"farmlandLevel\": 2, \"farmlandSoilQuality\": 2, \"pictures\": [ \"http://farmlandbucketstest.oss-cn-beijing.aliyuncs.com/21B7F1920D734078898AD63088736D55\" ], \"userId\": \"1\", \"otherInstructions\": \"\" }"
+			}
+
+			$.ajax(settings).done(function (response) {
+			  console.log(response);
+			  //$('#apiNameId').val(response);
+			  $('#apiNameId').val(response.errno);
+			  $('#apiErrmsg').val(response.errmsg);
+			  //$('#apiNameId').val(response.data == true);
+			  //$('#apiNameId').val(response.data == null);
+			  $('#txtUserName').val(response.data)		  
+			});
+		}
+    </script>
+</head>	
+<body>
+<div id="form-div" class="main">
+    <form id="form1" onsubmit="return false" action="##" method="post">
+        <p><input type="button" value="发送请求" onclick="save()"></p>
+		<p>返回结果：<input name="apiName" type="text" id="apiNameId" tabindex="2" size="50" value=""/></p>		
+		<p>返回结果：<input name="apiErrmsg" type="text" id="apiErrmsg" tabindex="2" size="50" style="color: #f00;" value=""/></p>	
+		<p>返回结果：<textarea name="fromString" type="text" id="txtUserName" rows="10" cols="50" value=""></textarea></p>
+    </form>
+</div>
+</body>
+</html>  
