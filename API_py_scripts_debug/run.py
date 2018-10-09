@@ -3,24 +3,19 @@ import json
 import unittest
 import time
 import os
-from common.readexcel import ExcelUtil
+from common.excel import ExcelUtil
 from common.Api_request import ApiRequest 
-import conf
 from common import HTMLTestRunner
-from common.writeexcel import write_excel
 from common.listdir import Listdir,Scan_excel_file
-
-#report
-curpath = os.path.dirname(os.path.realpath(__file__))
-report_path = os.path.join(curpath, "report")
-if not os.path.exists(report_path): os.mkdir(report_path)
-case_path = os.path.join(curpath, "case")
-
+from conf.conf import dataDir,reportDir,TIMEOUT,TOKEN
+from conf.conf import API_ENV,API_ENV_ON,API_ENV_NOW
+from common.dataUtil import DataUtil
 
 class testAPI(unittest.TestCase):
-    #2：scan
-    def scan_excel_datafiles(self):
-        datafilepath=conf.dataDir
+
+    #：scan
+    def test_scan_datafiles(self):
+        datafilepath=dataDir
         list_name=[]
         listname=Listdir(datafilepath,list_name,'_result')
         '''
@@ -44,15 +39,28 @@ class testAPI(unittest.TestCase):
                 print('--正在进行接口测试，开始第%d个请求---------------'%(i+1))
                 datalist=[]    
                 datalist=data[i]
-                
-                url="http://"+datalist['url'].strip()+ datalist['path'].strip()
+                #url
+                url=datalist['url'].strip()
+                url=DataUtil.get_url(url) #url
+                url="http://"+url+ datalist['path'].strip()
                 datas=datalist['params']
                 method=datalist['method']
                 headers={}
                 headers['content-type']=datalist['headers']
+                #token
                 if datalist['tokenname']=='BDHAuthorization':
                     tokenname=datalist['tokenname']
                     headers[tokenname]=datalist['token']
+                else:
+                    tokenname=datalist["tokenname"]
+                    token=datalist['token']
+                    location=""
+                    if len(token)<10:
+                        tokenname,token,location=DataUtil.get_token(tokenname,token)
+
+                        if location=='param':
+                            datas=datas+"""&"""+tokenname+"""="""+token
+                
                 print("-------请求参数-----------------") 
                 print(method)
                 print(url)
@@ -84,11 +92,9 @@ class testAPI(unittest.TestCase):
             
             #write_datas
             print("-------正在写入数据，请等待-----------------") 
-            write_excel(file_name_result,reals,key_names)
-            return suc_num,reals,key_names
+            ExcelUtil.write_excel(file_name_result,reals,key_names)
 
-
-    #1
+    #
     def test_bdh_api(self):
         #获取数据
         data,key_names= ExcelUtil(testxlsx).dict_data()
@@ -101,8 +107,8 @@ class testAPI(unittest.TestCase):
             print('--正在进行接口测试，开始第%d个请求---------------'%(i+1))
             datalist=[]    
             datalist=data[i]
-            
-            url="http://"+datalist['url'].strip()+ datalist['path'].strip()
+            url=datalist['url'].strip()               
+            url="http://"+url+ datalist['path'].strip()
             datas=datalist['params']
             method=datalist['method']
             headers={}
@@ -142,20 +148,17 @@ class testAPI(unittest.TestCase):
         #write_datas
         print("-------正在写入数据，请等待-----------------") 
         write_excel(newfile,reals,key_names)
-        return suc_num,reals,key_names
-
-                
+        return suc_num,reals,key_names               
     
 if __name__=="__main__":
     #unittest.main()
-    print(conf.dataDir,conf.reportDir)
+    print(dataDir,reportDir)
     #
     suite = unittest.TestSuite()
-    #write_excel
     #suite.addTest(testAPI('test_bdh_api'))
-    suite.addTest(testAPI('scan_excel_datafiles'))
+    suite.addTest(testAPI('test_scan_datafiles'))
     now = time.strftime("%Y-%m-%d %M-%H_%M_%S", time.localtime(time.time()))           
-    htmlreport = conf.reportDir+r"/"+now+"_result.html"
+    htmlreport = reportDir+r"/"+now+"_result.html"
     print("测试报告生成地址：%s"% htmlreport)
     fp = open(htmlreport, "wb")
     runner = HTMLTestRunner.HTMLTestRunner(stream=fp,
