@@ -39,7 +39,7 @@ class testAPI(unittest.TestCase):
                 print('--正在进行接口测试，开始第%d个请求---------------'%(i+1))
                 datalist=[]    
                 datalist=data[i]
-                #url
+                #url读数据
                 url=datalist['url'].strip()
                 url=DataUtil.get_url(url) #url
                 url="http://"+url+ datalist['path'].strip()
@@ -47,7 +47,7 @@ class testAPI(unittest.TestCase):
                 method=datalist['method']
                 headers={}
                 headers['content-type']=datalist['headers']
-                #token
+                #token处理
                 if datalist['tokenname']=='BDHAuthorization':
                     tokenname=datalist['tokenname']
                     headers[tokenname]=datalist['token']
