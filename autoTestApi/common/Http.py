@@ -1,6 +1,8 @@
 # coding:utf-8
 import requests
 import json
+from common import readexcel as reader,writeexcel as writer
+from urllib import parse
 
 session=requests.Session()
 #保存请求结果
@@ -10,22 +12,41 @@ json_res=''
 
 params={}
 param=''
+#存储值字典
+saveparam={}
+base_url=''
 
 #发送post请求的关键字
 def post(url,param):
     global session,response  #引用全局变量
-
-    #param_json()
-    
-    #调用pst发送请求
+    #param_json() 
+    #调用post发送请求
     #res=session.post(url,data=params,verify=False,timeout=30)
     res=session.post(url,data=param,verify=False,timeout=30)
     response=res.content.decode('utf8')
+
+    writer.write(reader.rr-1,7,'PASS')
+    writer.write(reader.rr-1,8,response)
+
     #print(res,type(res.json()))
     print(response)
     #调用json_paser
     json_paser()
 
+#发送get请求的关键字
+def get(url,param):
+    global session,response  #引用全局变量
+    #param_json() 
+    #调get发送请求
+    #res=session.post(url,data=params,verify=False,timeout=30)
+    res=session.get(url,data=param,verify=False,timeout=30)
+    response=res.content.decode('utf8')
+    writer.write(reader.rr-1,7,'PASS')
+    writer.write(reader.rr-1,8,response) 
+   
+    print(response)
+    #调用json_paser
+    json_paser()
 
 #json字符串解析,把json字符串解析为字典josn.loads
 def json_paser():
@@ -40,6 +61,8 @@ def add_header(hkey,jkey):
     global json_res,session
 
     session.headers[hkey]=json_res[jkey]
+    writer.write(reader.rr-1,7,'PASS')
+    writer.write(reader.rr-1,8,json_res[jkey])
     print('headers[%s]:'%(session.headers[hkey]),session.headers[hkey])
 
 
@@ -59,10 +82,11 @@ def param_json():
 
 #保存值
 def saveJson(jkey,key):
-    global json_res
-    key=json_res[jkey]
-    print('保存%s 的值是: %s'%(jkey,key))
-
+    global json_res,saveparam
+    saveparam[key]=json_res[jkey]
+    writer.write(reader.rr-1,7,'PASS')
+    writer.write(reader.rr-1,8,json_res[jkey])
+    print('保存%s 的值是: %s'%(key,json_res[jkey]))
 
 
 #断言
@@ -72,5 +96,33 @@ def assert_equals(key,value):
     #转化为字符串
     if json_res[key].__str__()==value:
         print('PASS')
+        writer.write(reader.rr-1,7,'PASS')
+        writer.write(reader.rr-1,8,value)
     else:
         print('Fail')
+        writer.write(reader.rr-1,7,'Fail')
+        writer.write(reader.rr-1,8,json_res[key])
+
+def seturl(url):
+    global base_url
+    base_url=url
+    writer.write(reader.rr-1,7,'PASS')
+    writer.write(reader.rr-1,8,base_url)
+
+#parse.quote(str1) 编码
+def ulrdecode(url):
+    urldecode=parse.unquote(url) #解码字符串
+
+
+def get_code(self):
+    #获取返回接口的状态码
+    code=self.api_request().status_code
+    return code
+
+def get_json(self):
+    #获取返回信息json数据
+    json_data=self.api_request().json()
+    return json_data
+
+
+
